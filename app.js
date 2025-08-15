@@ -23,7 +23,8 @@ config({ path: "./config/config.env" });
 // }));
 
 const allowedOrigins = [
-  "https://job-portal-liard-zeta.vercel.app", 
+  // "https://job-portal-liard-zeta.vercel.app",
+  "https://job-portal-1nv5h3c2f-pratiks-projects-0927266a.vercel.app",
   "http://localhost:5173", 
 ];
 
