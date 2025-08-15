@@ -22,9 +22,11 @@ config({ path: "./config/config.env" });
 //     credentials: true,
 // }));
 
+
+
 const allowedOrigins = [
-  "http://localhost:5173", // local dev
-  "https://job-portal-liard-zeta.vercel.app", // main frontend
+  "https://job-portal-liard-zeta.vercel.app",
+  "http://localhost:5173"
 ];
 
 // Regex to allow all vercel.app subdomains
@@ -32,14 +34,8 @@ const vercelRegex = /\.vercel\.app$/;
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true); // allow non-browser requests
-      }
-      if (
-        allowedOrigins.includes(origin) ||
-        vercelRegex.test(origin)
-      ) {
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -47,7 +43,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
