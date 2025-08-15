@@ -23,34 +23,37 @@ config({ path: "./config/config.env" });
 // }));
 
 
-
 const allowedOrigins = [
-  "https://job-portal-liard-zeta.vercel.app",
-  "http://localhost:5173"
+  "https://job-portal-liard-zeta.vercel.app", // your deployed FE
+  "http://localhost:5173",                    // local dev
 ];
+
+const corsOptionsDelegate = (origin, callback) => {
+  // allow non-browser tools (e.g., Postman) with no Origin
+  if (!origin) return callback(null, true);
+  if (allowedOrigins.includes(origin)) return callback(null, true);
+  return callback(new Error("Not allowed by CORS"));
+};
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: corsOptionsDelegate,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
-// Explicitly handle preflight so OPTIONS never gets blocked
-app.options("*", cors({
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-}));
+// Ensure preflight always succeeds with same policy
+app.options(
+  "*",
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 
 
 // Middleware
